@@ -1,29 +1,40 @@
-const mongoose = require("mongoose")
-const User = require("../models/users")
+const Users = require("../models/users")
 //logic for checking if user is registed
-async function userDetect (data){
-    User.find({username:data.username})
+
+// function must be async or will return false first, then when finish will return true.
+// keep async keyword in or will not work correctly
+async function userDetect (data,callback){
+
+    Users.find({username:data.username})
     .then((result)=>{
-        result = result[0]
-        // console.log(result)
-        // console.log(data)        
-        if(data.username==result.username){
-            if(data.password==result.password){
-                console.log(true)
-                // console.log(`welcome valued user ${data.username}`)
-                return true
-            }
+        if(result.length == 0 ){
+            callback(false)
         }else{
-            console.log(false)
-            return false
+            result = result[0]
+            if(data.username==result.username){
+                if(data.password==result.password){
+                    callback(result)
+                }else{
+                    callback(false)
+                }
+            }else{
+                callback(false)
+            }   
         }
     })
+    .catch((err)=>{
+        callback(err)
+        return
+    })
 
-    // for(var i = 0;i<savedUsers.length;i++){
-
-    
-    // }
-
+    // User.find({username:data.username})
+    // .then((result)=>{
+    //              
+    // })
 }
+
+// userDetect("jenkins",(result)=>{
+//     console.log(result)
+// })
 
 module.exports = userDetect

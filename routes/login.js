@@ -1,28 +1,48 @@
 const router = require("express").Router()
 const path = require("path")
 const userDetect = require("../authentication/userDetect")
-const mongoose = require("mongoose")
-// const session = require("express-session")
+const contentGetter = require("../authentication/contentGetter")
+const session = require("express-session")
+const { error } = require("console")
+
+// async function dbWait(attempt){
+//     var data = await userDetect(attempt)
+//     console.log(data)
+// }
+
 //login page route
 router.get("/",(req,res)=>{
     res.sendFile(path.join(__dirname,"../public/login.html"))
 })
 
 //login route that is hit when attempting to use the login page 
-router.post("/",(req,res)=>{ 
-    var user = req.body
-    if(userDetect(user)){
-        // console.log("this is working")
-        req.session.user = user.username
-        // req.session.save()
+router.post("/",async (req,res)=>{ 
+    var attempt = req.body
 
-        console.log(req.session)
-        // req.session.save()
-        res.redirect("/")
-    }else{
-        console.log("this is not working")
-        res.redirect("/login")
-    }
+    userDetect(attempt,(result)=>{
+        console.log(result)
+        if(result){
+            req.session.user = result
+            contentGetter(req.session.user._id,(result)=>{
+                req.session.content = result
+                return res.redirect("/")
+            })
+        }
+    
+            // res.redirect("/login")
+    })
+
+
+
+    // if(userDetect(attempt)){
+        
+
+    //     return res.redirect("/")
+    // }else{
+    //     console.log("not working")
+    //     error("poop")
+    //     res.redirect("/login")
+    // }
 })
 
 module.exports = router
