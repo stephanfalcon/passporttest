@@ -6,8 +6,11 @@ const contentGetter = require("../authentication/contentGetter")
 
 router.get("/",(req,res)=>{
     var user = req.session.user
-    console.log(req.session)
-    return res.json(req.session.content)
+    // console.log(req.session)
+    contentGetter(user._id,(result)=>{
+        req.session.content = result
+        return res.json(req.session.content)
+    })
 })
 
 router.post("/",(req,res)=>{
@@ -19,10 +22,8 @@ router.post("/",(req,res)=>{
     })
 
     content.save()
-
-    res.location("/")
-
-
+    console.log(req.url)
+    return(res.redirect(req.url))
 })
 
 module.exports = router

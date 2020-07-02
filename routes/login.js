@@ -20,16 +20,14 @@ router.post("/",async (req,res)=>{
     var attempt = req.body
 
     userDetect(attempt,(result)=>{
-        console.log(result)
+        // console.log(result)
         if(result){
             req.session.user = result
-            contentGetter(req.session.user._id,(result)=>{
-                req.session.content = result
-                return res.redirect("/")
-            })
+            return res.redirect("/")
+        }else{
+            res.redirect("/login")
         }
     
-            // res.redirect("/login")
     })
 
 
