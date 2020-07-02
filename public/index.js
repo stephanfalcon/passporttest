@@ -1,3 +1,4 @@
+
 class Document {
     constructor(){
         this.state={
@@ -46,14 +47,36 @@ getCont = () =>{
     })
 }
 
+// removeEle = (event) =>{
+//     console.log(event)
+//     console.log(this)
+// }
+async function removeFunc(url,id) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+      method: 'DELETE',
+      body: id
+    });
+    return response // parses JSON response into native JavaScript objects
+  }
+
 setCont = () =>{
             for(var i = 0;i<state.state.content.length;i++){
-            var node = document.createElement("li")
-            node.innerHTML = state.state.content[i].content
+            var obj = state.state.content[i]
+            var node = document.createElement("div")
+                
+            var inner = `<li data-_id="${obj._id}">${obj.content}</li>`
+
+            node.addEventListener("click",(event)=>{
+                var id = event.target.getAttribute("data-_id")
+                removeFunc("/content", id)
+                event.target.remove()
+            })
+
+            node.innerHTML = inner
             document.getElementById("content").appendChild(node)
             }
             document.getElementById("username").innerHTML = "welcome " + state.state.user.username
-            // console.log(state.getEle(user))
 }
 logUser()
 getCont()
